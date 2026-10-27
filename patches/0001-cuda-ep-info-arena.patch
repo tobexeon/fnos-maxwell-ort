@@ -1,0 +1,15 @@
+diff --git a/onnxruntime/core/providers/cuda/cuda_execution_provider_info.h b/onnxruntime/core/providers/cuda/cuda_execution_provider_info.h
+index 0efad80..93cfe54 100644
+--- a/onnxruntime/core/providers/cuda/cuda_execution_provider_info.h
++++ b/onnxruntime/core/providers/cuda/cuda_execution_provider_info.h
+@@ -48,8 +48,8 @@ struct TunableOpInfo {
+ struct CUDAExecutionProviderInfo {
+   OrtDevice::DeviceId device_id{0};
+   size_t gpu_mem_limit{std::numeric_limits<size_t>::max()};                         // Will be over-ridden by contents of `default_memory_arena_cfg` (if specified)
+-  ArenaExtendStrategy arena_extend_strategy{ArenaExtendStrategy::kNextPowerOfTwo};  // Will be over-ridden by contents of `default_memory_arena_cfg` (if specified)
+-  OrtCudnnConvAlgoSearch cudnn_conv_algo_search{OrtCudnnConvAlgoSearchExhaustive};
++  ArenaExtendStrategy arena_extend_strategy{ArenaExtendStrategy::kSameAsRequested};  // Will be over-ridden by contents of `default_memory_arena_cfg` (if specified)
++  OrtCudnnConvAlgoSearch cudnn_conv_algo_search{OrtCudnnConvAlgoSearchHeuristic};
+   bool do_copy_in_default_stream{true};
+   bool has_user_compute_stream{false};
+   void* user_compute_stream{nullptr};

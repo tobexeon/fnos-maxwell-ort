@@ -1,0 +1,13 @@
+diff --git a/onnxruntime/core/framework/session_options.h b/onnxruntime/core/framework/session_options.h
+index 8d4db36..eedc5ef 100644
+--- a/onnxruntime/core/framework/session_options.h
++++ b/onnxruntime/core/framework/session_options.h
+@@ -97,7 +97,7 @@ struct SessionOptions {
+   // and generate a memory pattern for future request. So next time we could just do one allocation
+   // with a big chunk for all the internal memory allocation.
+   // See class 'OrtValuePatternPlanner'.
+-  bool enable_mem_pattern = true;
++  bool enable_mem_pattern = false;
+ 
+   // Enable memory resue in memory planning. Allows to reuse tensor buffer between tensors if they are of
+   // the same size. The issue with this is it can lead to memory being held for longer than needed and

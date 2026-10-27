@@ -1,0 +1,17 @@
+# build outputs
+build/
+out/
+dist/
+.ccache/
+
+# binaries
+*.so
+*.so.*
+*.whl
+*.fpk
+
+# editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

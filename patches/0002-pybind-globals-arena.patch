@@ -1,0 +1,21 @@
+diff --git a/onnxruntime/python/onnxruntime_pybind_state_common.cc b/onnxruntime/python/onnxruntime_pybind_state_common.cc
+index cec4dfc..2fb095f 100644
+--- a/onnxruntime/python/onnxruntime_pybind_state_common.cc
++++ b/onnxruntime/python/onnxruntime_pybind_state_common.cc
+@@ -21,14 +21,14 @@ size_t gpu_mem_limit = std::numeric_limits<size_t>::max();
+ 
+ #ifdef USE_CUDA
+ // TODO remove deprecated global config
+-OrtCudnnConvAlgoSearch cudnn_conv_algo_search = OrtCudnnConvAlgoSearchExhaustive;
++OrtCudnnConvAlgoSearch cudnn_conv_algo_search = OrtCudnnConvAlgoSearchHeuristic;
+ // TODO remove deprecated global config
+ bool do_copy_in_default_stream = true;
+ // TODO remove deprecated global config
+ onnxruntime::cuda::TunableOpInfo tunable_op{};
+ onnxruntime::CUDAExecutionProviderExternalAllocatorInfo external_allocator_info{};
+ // TODO remove deprecated global config
+-onnxruntime::ArenaExtendStrategy arena_extend_strategy = onnxruntime::ArenaExtendStrategy::kNextPowerOfTwo;
++onnxruntime::ArenaExtendStrategy arena_extend_strategy = onnxruntime::ArenaExtendStrategy::kSameAsRequested;
+ #endif
+ 
+ #ifdef USE_ROCM
