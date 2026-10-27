@@ -48,28 +48,23 @@ nvidia-smi --query-gpu=name,memory.total,compute_cap --format=csv
 # 1. 构建镜像
 docker build -t fnos-maxwell-ort:1.19.0 .
 
-# 2. 首次全量编译（1-3 小时，建议 ≥ 16 GB 内存 + 10 核）
-docker run --rm -it \
-  -v "$PWD/build:/build" -v "$PWD/dist:/dist" \
-  --shm-size=2g -m 16g \
-  fnos-maxwell-ort:1.19.0 \
-  bash -c "bash /build/../scripts/build.sh"
-
-# 3. 取出四个运行时文件到 dist/
-docker run --rm -it \
-  -v "$PWD/build:/build" -v "$PWD/dist:/dist" \
-  fnos-maxwell-ort:1.19.0 \
-  bash -c "bash /build/../scripts/collect.sh /dist"
-```
-
-由于脚本在镜像里没有挂载，实际使用时把仓库挂到 `/repo` 更直接：
-
-```bash
+# 2. 编译并收集产物（首次 1-3 小时，建议 ≥ 16 GB 内存）
+#    仓库挂到 /repo，源码与构建目录落在 ./build，产物落在 ./dist
 docker run --rm -it \
   -v "$PWD:/repo" -v "$PWD/build:/build" -v "$PWD/dist:/dist" \
   --shm-size=2g -m 16g \
   fnos-maxwell-ort:1.19.0 \
   bash -c "bash /repo/scripts/build.sh && bash /repo/scripts/collect.sh /dist"
+```
+
+想交互调试就进容器：
+
+```bash
+docker run --rm -it \
+  -v "$PWD:/repo" -v "$PWD/build:/build" -v "$PWD/dist:/dist" \
+  --shm-size=2g -m 16g \
+  fnos-maxwell-ort:1.19.0 bash
+# 容器内：bash /repo/scripts/build.sh
 ```
 
 增量重编（ccache 已就绪）通常 20-40 秒。
@@ -130,7 +125,7 @@ systemctl restart ai_manager
 
 **方式二：打包成 FPK**（推荐分发用）
 
-FNOS 应用包需要 `manifest` + `cmd/` 生命周期脚本 + `overlay-amd64/app/`。可用 [fn-fpk-builder-skill](https://github.com/) 的 `fpk.py` 构建：
+FNOS 应用包需要 `manifest` + `cmd/` 生命周期脚本 + `overlay-amd64/app/`。可用 fnOS 的 fpk 构建工具（`fn-fpk-builder-skill` 的 `fpk.py`）构建：
 
 ```bash
 fpk.py build --project ./packages/ort-maxwell --out ./dist \
@@ -150,9 +145,10 @@ nvidia-smi --query-gpu=memory.used --format=csv,noheader -lms 500
 也可以直接量一次：
 
 ```bash
+AI=$(ls -d /vol*/@sysappmeta/ai-manager | head -1)
 python3 -c "
 import onnxruntime as ort
-s = ort.InferenceSession('$SITE/../../models/img2vec-large-model-1.0.0/img2vec.onnx',
+s = ort.InferenceSession('$AI/models/img2vec-large-model-1.0.0/img2vec.onnx',
                          ort.SessionOptions(), providers=['CUDAExecutionProvider'])
 print(s.get_providers())"
 ```
